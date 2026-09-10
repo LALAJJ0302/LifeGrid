@@ -14,14 +14,21 @@ import Foundation
 struct CreateDayCoverUseCase {
     private let repository: any DayCoverRepository
 
-    init(repository: any DayCoverRepository) {
+    private let calendar: Calendar
+
+    init(repository: any DayCoverRepository, calendar: Calendar = .current) {
+        self.calendar = calendar
         self.repository = repository
     }
 
     @discardableResult
-    func execute(dayCover: DayCover) throws -> DayCover {
+    func execute(dayCover: DayCover, today: Date = .now) throws -> DayCover {
         guard dayCover.hasMeaningfulContent else {
             throw CreateDayCoverError.emptyCover
+        }
+
+        guard calendar.startOfDay(for: dayCover.day) <= calendar.startOfDay(for: today) else {
+            throw CreateDayCoverError.futureDateNotAllowed
         }
 
         guard repository.dayCover(for: dayCover.day) == nil else {

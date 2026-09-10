@@ -19,7 +19,7 @@ import Foundation
 struct DayCover: Identifiable, Codable, Equatable {
     let id: UUID
     let day: Date
-    var drawingData: Data?
+    var artwork: DayCoverArtwork?
     var mood: MoodSticker?
     var reflection: String
     let createdAt: Date
@@ -27,14 +27,14 @@ struct DayCover: Identifiable, Codable, Equatable {
     init(
         id: UUID = UUID(),
         day: Date,
-        drawingData: Data? = nil,
+        artwork: DayCoverArtwork? = nil,
         mood: MoodSticker? = nil,
         reflection: String = "",
         createdAt: Date = Date()
     ) {
         self.id = id
         self.day = day
-        self.drawingData = drawingData
+        self.artwork = artwork
         self.mood = mood
         self.reflection = reflection
         self.createdAt = createdAt
@@ -45,7 +45,7 @@ struct DayCover: Identifiable, Codable, Equatable {
             in: .whitespacesAndNewlines
         )
 
-        let containsDrawing = drawingData?.isEmpty == false
+        let containsDrawing = artwork != nil
         let containsMood = mood != nil
         let containsReflection = !trimmedReflection.isEmpty
 

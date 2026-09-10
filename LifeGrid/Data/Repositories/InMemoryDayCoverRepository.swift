@@ -29,6 +29,16 @@ final class InMemoryDayCoverRepository: DayCoverRepository {
         }
     }
 
+    func dayCovers(in interval: DateInterval) -> [DayCover] {
+        storedDayCovers.filter { $0.day >= interval.start && $0.day < interval.end }
+            .sorted { $0.day < $1.day }
+    }
+
+    func update(_ dayCover: DayCover) {
+        guard let index = storedDayCovers.firstIndex(where: { $0.id == dayCover.id }) else { return }
+        storedDayCovers[index] = dayCover
+    }
+
     func save(_ dayCover: DayCover) {
         storedDayCovers.append(dayCover)
     }

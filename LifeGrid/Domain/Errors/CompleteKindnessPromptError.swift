@@ -1,37 +1,25 @@
-//
-//  CompleteKindnessPromptError.swift
-//  LifeGrid
-//
-//  Created by JJ on 8/9/2026.
-//
-
 import Foundation
 
-/// Describes a problem that prevents a student from completing a Kindness Prompt.
-///
-/// The messages acknowledge the student's progress and provide a clear next step without turning kindness into a source of pressure.
-
+/// Describes a problem that prevents a student from recording a kindness action.
 enum CompleteKindnessPromptError: LocalizedError, Equatable {
     case promptAlreadyCompleted
-    case dailyCompletionLimitReached
+    case weeklyCompletionLimitReached
 
     var errorDescription: String? {
         switch self {
         case .promptAlreadyCompleted:
             return "This kindness prompt has already been completed."
-
-        case .dailyCompletionLimitReached:
-            return "You have already completed a kindness prompt today."
+        case .weeklyCompletionLimitReached:
+            return "You have already recorded a kindness prompt this week."
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .promptAlreadyCompleted:
-            return "Choose a different prompt or revisit this moment in your Life Grid."
-
-        case .dailyCompletionLimitReached:
-            return "Come back tomorrow for a new prompt. One meaningful action is enough for today."
+            return "Keep this moment in your Memory Jar and choose a new prompt next week."
+        case .weeklyCompletionLimitReached:
+            return "Come back next week for a new prompt. One meaningful action is enough."
         }
     }
 }

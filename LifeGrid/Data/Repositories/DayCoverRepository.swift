@@ -15,6 +15,12 @@ protocol DayCoverRepository {
     /// Returns the Day Cover saved for the specified day, if one exists.
     func dayCover(for day: Date) -> DayCover?
 
+    /// Start inclusive, end exclusive, ordered earliest first.
+    func dayCovers(in interval: DateInterval) -> [DayCover]
+
+    /// Replaces the cover with the same identity when editing.
+    func update(_ dayCover: DayCover)
+
     /// Saves a new Day Cover.
     func save(_ dayCover: DayCover)
 
