@@ -13,6 +13,7 @@ struct DrawDayCoverView: View {
     @State private var restoreFailed = false
     @State private var erasing = false
     @State private var ink: Color = .orange
+    @State private var selectedPreset: DrawingInkPreset? = .orange
     @State private var brushWidth: CGFloat = 6
     @State private var saved = false
 
@@ -26,10 +27,43 @@ struct DrawDayCoverView: View {
                     Text("The saved preview is available. Editable strokes could not be restored.")
                 } else {
                     HStack {
-                        ColorPicker("Ink", selection: $ink, supportsOpacity: false)
+                        ColorPicker(
+                            "Custom colour",
+                            selection: Binding(
+                                get: { ink },
+                                set: { colour in
+                                    ink = colour
+                                    selectedPreset = nil
+                                    erasing = false
+                                }
+                            ),
+                            supportsOpacity: false
+                        )
                         Toggle("Eraser", isOn: $erasing)
                         Button("Clear") { drawing = PKDrawing() }
                     }
+                    HStack(spacing: 14) {
+                        ForEach(DrawingInkPreset.allCases) { preset in
+                            Button {
+                                ink = preset.colour
+                                selectedPreset = preset
+                                erasing = false
+                            } label: {
+                                Circle()
+                                    .fill(preset.colour)
+                                    .frame(width: 30, height: 30)
+                                    .overlay {
+                                        Circle()
+                                            .stroke(.primary, lineWidth: selectedPreset == preset ? 3 : 0)
+                                            .padding(-4)
+                                    }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("\(preset.name) ink")
+                            .accessibilityAddTraits(selectedPreset == preset ? .isSelected : [])
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                     HStack {
                         Image(systemName: "pencil.tip")
                             .accessibilityHidden(true)
@@ -105,5 +139,23 @@ struct DrawDayCoverView: View {
         saved = viewModel.saveMemory(for: date, artwork: artwork, mood: mood,
                                      reflection: reflection, existing: existing)
         if saved { existing = viewModel.repository.dayCover(for: date) }
+    }
+}
+
+private enum DrawingInkPreset: String, CaseIterable, Identifiable {
+    case black, blue, green, orange, red, purple
+
+    var id: String { rawValue }
+    var name: String { rawValue.capitalized }
+
+    var colour: Color {
+        switch self {
+        case .black: .black
+        case .blue: .blue
+        case .green: .green
+        case .orange: .orange
+        case .red: .red
+        case .purple: .purple
+        }
     }
 }
