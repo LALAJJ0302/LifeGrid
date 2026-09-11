@@ -17,6 +17,7 @@ struct DrawDayCoverView: View {
     @State private var selectedPreset: DrawingInkPreset? = .orange
     @State private var brushWidth: CGFloat = 6
     @State private var saved = false
+    @State private var showingClearConfirmation = false
 
     var body: some View {
         ScrollView {
@@ -78,9 +79,9 @@ struct DrawDayCoverView: View {
                         Spacer()
 
                         Button("Clear") {
-                            drawing = PKDrawing()
-                            canvasController.resetUndoHistory()
+                            showingClearConfirmation = true
                         }
+                        .disabled(drawing.strokes.isEmpty)
                     }
                     HStack {
                         Image(systemName: "pencil.tip")
@@ -129,6 +130,19 @@ struct DrawDayCoverView: View {
         .onAppear { restore() }
         .alert(item: $viewModel.alert) { message in
             Alert(title: Text(message.title), message: Text(message.details))
+        }
+        .confirmationDialog(
+            "Clear this drawing?",
+            isPresented: $showingClearConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Clear Drawing", role: .destructive) {
+                drawing = PKDrawing()
+                canvasController.resetUndoHistory()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will remove the whole drawing.")
         }
     }
 
