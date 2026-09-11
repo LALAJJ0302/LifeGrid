@@ -13,6 +13,7 @@ struct DrawDayCoverView: View {
     @State private var restoreFailed = false
     @State private var erasing = false
     @State private var ink: Color = .orange
+    @State private var brushWidth: CGFloat = 6
     @State private var saved = false
 
     var body: some View {
@@ -29,7 +30,23 @@ struct DrawDayCoverView: View {
                         Toggle("Eraser", isOn: $erasing)
                         Button("Clear") { drawing = PKDrawing() }
                     }
-                    PencilCanvasView(drawing: $drawing, ink: UIColor(ink), erasing: erasing)
+                    HStack {
+                        Image(systemName: "pencil.tip")
+                            .accessibilityHidden(true)
+                        Slider(value: $brushWidth, in: 1...24, step: 1)
+                            .accessibilityLabel("Brush thickness")
+                            .accessibilityValue("\(Int(brushWidth)) points")
+                        Text("\(Int(brushWidth)) pt")
+                            .font(.caption.monospacedDigit())
+                            .frame(width: 38, alignment: .trailing)
+                    }
+                    .disabled(erasing)
+                    PencilCanvasView(
+                        drawing: $drawing,
+                        ink: UIColor(ink),
+                        brushWidth: brushWidth,
+                        erasing: erasing
+                    )
                         .frame(height: 300)
                         .onGeometryChange(for: CGSize.self) { $0.size } action: { canvasSize = $0 }
                         .clipShape(RoundedRectangle(cornerRadius: 12))

@@ -50,16 +50,10 @@ The current MVP uses in-memory repositories, which keeps the business rules easy
 ## Requirements
 
 - macOS with Xcode
-- An iOS Simulator or physical iPhone/iPad that supports the project’s deployment target
-- No third-party dependencies
 
 ## Running the App
 
 1. Clone the repository:
-
-```bash
-git clone https://github.com/LALAJJ0302/LifeGrid.git
-```
 
 2. Open `LifeGrid.xcodeproj` in Xcode.
 3. Select the `LifeGrid` scheme.

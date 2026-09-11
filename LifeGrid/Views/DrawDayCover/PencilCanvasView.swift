@@ -4,6 +4,7 @@ import PencilKit
 struct PencilCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
     var ink: UIColor = .systemOrange
+    var brushWidth: CGFloat = 6
     var erasing = false
 
     func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
@@ -18,7 +19,9 @@ struct PencilCanvasView: UIViewRepresentable {
     }
     func updateUIView(_ canvas: PKCanvasView, context: Context) {
         context.coordinator.parent = self
-        canvas.tool = erasing ? PKEraserTool(.vector) : PKInkingTool(.pen, color: ink, width: 6)
+        canvas.tool = erasing
+            ? PKEraserTool(.vector)
+            : PKInkingTool(.pen, color: ink, width: brushWidth)
         if canvas.drawing.dataRepresentation() != drawing.dataRepresentation() {
             canvas.drawing = drawing
         }
