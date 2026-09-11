@@ -4,6 +4,7 @@ import PencilKit
 struct DrawDayCoverView: View {
     @ObservedObject var viewModel: WeeklyMemoryViewModel
     let date: Date
+    @StateObject private var canvasController = PencilCanvasController()
     @State private var drawing = PKDrawing()
     @State private var mood: MoodSticker?
     @State private var reflection = ""
@@ -40,7 +41,6 @@ struct DrawDayCoverView: View {
                             supportsOpacity: false
                         )
                         Toggle("Eraser", isOn: $erasing)
-                        Button("Clear") { drawing = PKDrawing() }
                     }
                     HStack(spacing: 14) {
                         ForEach(DrawingInkPreset.allCases) { preset in
@@ -65,6 +65,24 @@ struct DrawDayCoverView: View {
                     }
                     .frame(maxWidth: .infinity)
                     HStack {
+                        Button("Undo", systemImage: "arrow.uturn.backward") {
+                            canvasController.undo()
+                        }
+                        .disabled(!canvasController.canUndo)
+
+                        Button("Redo", systemImage: "arrow.uturn.forward") {
+                            canvasController.redo()
+                        }
+                        .disabled(!canvasController.canRedo)
+
+                        Spacer()
+
+                        Button("Clear") {
+                            drawing = PKDrawing()
+                            canvasController.resetUndoHistory()
+                        }
+                    }
+                    HStack {
                         Image(systemName: "pencil.tip")
                             .accessibilityHidden(true)
                         Slider(value: $brushWidth, in: 1...24, step: 1)
@@ -77,6 +95,7 @@ struct DrawDayCoverView: View {
                     .disabled(erasing)
                     PencilCanvasView(
                         drawing: $drawing,
+                        controller: canvasController,
                         ink: UIColor(ink),
                         brushWidth: brushWidth,
                         erasing: erasing
